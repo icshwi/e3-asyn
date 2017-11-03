@@ -4,8 +4,9 @@ include ${REQUIRE_TOOLS}/driver.makefile
 EPICS_LIBCOM_ONLY=NO
 
 USR_CFLAGS   += -Wno-unused-variable
+USR_CFLAGS   += -Wno-unused-function
 USR_CPPFLAGS += -Wno-unused-variable
-
+USR_CPPFLAGS += -Wno-unused-function
 
 
 ASYN = asyn
