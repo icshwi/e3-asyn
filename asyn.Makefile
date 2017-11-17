@@ -1,5 +1,10 @@
-include ${REQUIRE_TOOLS}/driver.makefile
 
+# Get where_am_I before include driver.makefile
+# if after driver.makefile where_am_I is the epics base
+# 
+where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+
+include ${REQUIRE_TOOLS}/driver.makefile
 
 EPICS_LIBCOM_ONLY=NO
 
@@ -12,68 +17,40 @@ USR_CPPFLAGS += -Wno-unused-function
 ASYN = asyn
 
 
-ifneq ($(EPICS_LIBCOM_ONLY),YES)
+# asynRecord.h should be converted first
+#
 
-  ASYNRECORD += $(ASYN)/asynRecord
-#  DBDINC += asynRecord
-  USR_CFLAGS += -I$(COMMON_DIR)/
-  DBDS       += $(ASYNRECORD)/asynRecord.dbd
-  DBDS        += $(ASYNRECORD)/devAsynRecord.dbd
-  SOURCES    += $(ASYNRECORD)/asynRecord.c
-  SOURCES    += $(ASYNRECORD)/drvAsyn.c
-  TEMPLATES  += $(ASYNRECORD)/asynRecord.db
+# Order the sources compiling....
 
-  DEVEPICS = $(ASYN)/devEpics
-
-  DBDS       += $(DEVEPICS)/devAsynInt32.dbd
-  DBDS       += $(DEVEPICS)/devAsynInt8Array.dbd
-  DBDS       += $(DEVEPICS)/devAsynInt16Array.dbd
-  DBDS       += $(DEVEPICS)/devAsynInt32Array.dbd
-  DBDS       += $(DEVEPICS)/devAsynInt32TimeSeries.dbd
-  DBDS       += $(DEVEPICS)/devAsynUInt32Digital.dbd
-  DBDS       += $(DEVEPICS)/devAsynFloat64.dbd
-  DBDS       += $(DEVEPICS)/devAsynFloat32Array.dbd
-  DBDS       += $(DEVEPICS)/devAsynFloat64Array.dbd
-  DBDS       += $(DEVEPICS)/devAsynFloat64TimeSeries.dbd
-  DBDS       += $(DEVEPICS)/devEpics.dbd
+DEVGPIB:=$(ASYN)/devGpib
+VXI11:=$(ASYN)/vxi11
+ASYNRECORD:=$(ASYN)/asynRecord
+DEVEPICS:=$(ASYN)/devEpics
+ASYNPORTDRIVER:=$(ASYN)/asynPortDriver
+MISCELLANEOUS:=$(ASYN)/miscellaneous
+INTERFACES:=$(ASYN)/interfaces
+DRVASYNSERIAL:=$(ASYN)/drvAsynSerial
+ASYNGPIB:=$(ASYN)/asynGpib
+ASYNDRIVER:=$(ASYN)/asynDriver
 
 
-  TEMPLATES += $(DEVEPICS)/asynInt32TimeSeries.db
-  TEMPLATES += $(DEVEPICS)/asynFloat64TimeSeries.db
+USR_INCLUDES += -I$(where_am_I)/$(DEVGPIB)
+USR_INCLUDES += -I$(where_am_I)/$(VXI11)
+USR_INCLUDES += -I$(where_am_I)/$(ASYNRECORD)
+USR_INCLUDES += -I$(where_am_I)/$(DEVEPICS)
+USR_INCLUDES += -I$(where_am_I)/$(ASYNPORTDRIVER)
+USR_INCLUDES += -I$(where_am_I)/$(MISCELLANEOUS)
+USR_INCLUDES += -I$(where_am_I)/$(INTERFACES)
+USR_INCLUDES += -I$(where_am_I)/$(DRVASYNSERIAL)
+USR_INCLUDES += -I$(where_am_I)/$(ASYNGPIB)
+USR_INCLUDES += -I$(where_am_I)/$(ASYNDRIVER)
 
-
-  HEADERS   += $(DEVEPICS)/asynEpicsUtils.h
-  SOURCES   += $(DEVEPICS)/devAsynOctet.c
-  SOURCES   += $(DEVEPICS)/asynEpicsUtils.c
-  SOURCES   += $(DEVEPICS)/devAsynInt32.c
-  SOURCES   += $(DEVEPICS)/devAsynInt8Array.c
-  SOURCES   += $(DEVEPICS)/devAsynInt16Array.c
-  SOURCES   += $(DEVEPICS)/devAsynInt32Array.c
-  SOURCES   += $(DEVEPICS)/devAsynInt32TimeSeries.c
-  SOURCES   += $(DEVEPICS)/devAsynUInt32Digital.c
-  SOURCES   += $(DEVEPICS)/devAsynFloat64.c
-  SOURCES   += $(DEVEPICS)/devAsynFloat32Array.c
-  SOURCES   += $(DEVEPICS)/devAsynFloat64Array.c
-  SOURCES   += $(DEVEPICS)/devAsynFloat64TimeSeries.c
-
-
-endif
-
-
-
-ASYNDRIVER = $(ASYN)/asynDriver
 HEADERS += $(ASYNDRIVER)/asynDriver.h
 HEADERS += $(ASYNDRIVER)/epicsInterruptibleSyscall.h
 
-SOURCES += $(ASYNDRIVER)/asynManager.c
-SOURCES += $(ASYNDRIVER)/epicsInterruptibleSyscall.c
-
-
-ASYNGPIB = $(ASYN)/asynGpib
 HEADERS += $(ASYNGPIB)/asynGpibDriver.h
 SOURCES += $(ASYNGPIB)/asynGpib.c
 
-DRVASYNSERIAL = $(ASYN)/drvAsynSerial
 
 HEADERS += $(DRVASYNSERIAL)/drvAsynSerialPort.h
 SOURCES += $(DRVASYNSERIAL)/drvAsynSerialPort.c
@@ -87,7 +64,6 @@ SOURCES += $(DRVASYNSERIAL)/drvAsynIPServerPort.c
 DBDS     += $(DRVASYNSERIAL)/drvAsynIPPort.dbd
 
 
-INTERFACES = $(ASYN)/interfaces
 
 HEADERS += $(INTERFACES)/asynInt32.h
 HEADERS += $(INTERFACES)/asynInt32SyncIO.h
@@ -146,18 +122,11 @@ SOURCES += $(INTERFACES)/asynStandardInterfacesBase.c
 
 
 
-
-
-MISCELLANEOUS = asyn/miscellaneous
-
 HEADERS += $(MISCELLANEOUS)/asynShellCommands.h
 HEADERS += $(MISCELLANEOUS)/asynInterposeCom.h
 HEADERS += $(MISCELLANEOUS)/asynInterposeEos.h
 HEADERS += $(MISCELLANEOUS)/asynInterposeFlush.h
-# EPICS_LIBCOM_ONLY=YES
-ifneq ($(EPICS_LIBCOM_ONLY),YES)
-  SOURCES += $(MISCELLANEOUS)/asynShellCommands.c
-endif
+SOURCES += $(MISCELLANEOUS)/asynShellCommands.c
 SOURCES += $(MISCELLANEOUS)/asynInterposeCom.c
 SOURCES += $(MISCELLANEOUS)/asynInterposeEos.c
 SOURCES += $(MISCELLANEOUS)/asynInterposeFlush.c
@@ -165,9 +134,6 @@ SOURCES += $(MISCELLANEOUS)/asynInterposeFlush.c
 DBDS     += $(MISCELLANEOUS)/asyn.dbd
 
 
-
-
-ASYNPORTDRIVER = $(ASYN)/asynPortDriver
 
 
 HEADERS += $(ASYNPORTDRIVER)/exceptions/ParamListInvalidIndex.h
@@ -184,128 +150,123 @@ SOURCES += $(ASYNPORTDRIVER)/exceptions/ParamValStringSizeRequestTooBig.cpp
 SOURCES += $(ASYNPORTDRIVER)/exceptions/ParamValWrongType.cpp
 SOURCES += $(ASYNPORTDRIVER)/exceptions/ParamValValueNotChanged.cpp
 
-ifeq ($(EPICS_LIBCOM_ONLY),YES)
-   USR_CXXFLAGS += -DEPICS_LIBCOM_ONLY
-   USR_CFLAGS   += -DEPICS_LIBCOM_ONLY
-endif
-
-
-HEADERS += $(ASYNPORTDRIVER)/asynParamType.h
-HEADERS += $(ASYNPORTDRIVER)/paramErrors.h
-HEADERS += $(ASYNPORTDRIVER)/asynPortDriver.h
-
-SOURCES += $(ASYNPORTDRIVER)/paramVal.cpp
-SOURCES += $(ASYNPORTDRIVER)/asynPortDriver.cpp
-
-
-ASYNPORTCLIENT = $(ASYN)/asynPortClient
-
-HEADERS += $(ASYNPORTCLIENT)/asynPortClient.h
-SOURCES += $(ASYNPORTCLIENT)/asynPortClient.cpp
 
 
 
+DBDS       += $(DEVEPICS)/devAsynInt8Array.dbd
+DBDS       += $(DEVEPICS)/devAsynInt16Array.dbd
+DBDS       += $(DEVEPICS)/devAsynInt32Array.dbd
+DBDS       += $(DEVEPICS)/devAsynFloat32Array.dbd
+DBDS       += $(DEVEPICS)/devAsynFloat64Array.dbd
+
+DBDS       += $(DEVEPICS)/devAsynOctet.dbd
+DBDS       += $(DEVEPICS)/devAsynInt32.dbd
+DBDS       += $(DEVEPICS)/devAsynFloat64.dbd
+DBDS       += $(DEVEPICS)/devAsynUInt32Digital.dbd
+DBDS       += $(DEVEPICS)/devAsynFloat64TimeSeries.dbd
+DBDS       += $(DEVEPICS)/devAsynInt32TimeSeries.dbd
+DBDS       += $(DEVEPICS)/devEpics.dbd
 
 
-VXI11 =  $(ASYN)/vxi11
+TEMPLATES += $(DEVEPICS)/asynInt32TimeSeries.db
+TEMPLATES += $(DEVEPICS)/asynFloat64TimeSeries.db
 
 
-#USR_CFLAGS += -I../../$(VXI11)/
-#USR_CFLAGS += -I../../$(VXI11)/rpc/
+HEADERS   += $(DEVEPICS)/asynEpicsUtils.h
+SOURCES   += $(DEVEPICS)/devAsynOctet.c
+SOURCES   += $(DEVEPICS)/asynEpicsUtils.c
+SOURCES   += $(DEVEPICS)/devAsynInt32.c
+SOURCES   += $(DEVEPICS)/devAsynInt8Array.c
+SOURCES   += $(DEVEPICS)/devAsynInt16Array.c
+SOURCES   += $(DEVEPICS)/devAsynInt32Array.c
+SOURCES   += $(DEVEPICS)/devAsynInt32TimeSeries.c
+SOURCES   += $(DEVEPICS)/devAsynUInt32Digital.c
+SOURCES   += $(DEVEPICS)/devAsynFloat64.c
+SOURCES   += $(DEVEPICS)/devAsynFloat32Array.c
+SOURCES   += $(DEVEPICS)/devAsynFloat64Array.c
+SOURCES   += $(DEVEPICS)/devAsynFloat64TimeSeries.c
+
+
+
+# Should check it...
+
+#DBDS      += $(ASYNRECORD)/asynRecord.dbd
+DBDS      += $(ASYNRECORD)/devAsynRecord.dbd
+SOURCES   += $(ASYNRECORD)/asynRecord.c
+SOURCES   += $(ASYNRECORD)/drvAsyn.c
+
+TEMPLATES += $(ASYNRECORD)/asynRecord.db
+
+
+
+
+
+DBDS += $(VXI11)/drvVxi11.dbd
 
 HEADERS += $(VXI11)/drvVxi11.h
 HEADERS += $(VXI11)/osiRpc.h
-HEADERS += $(VXI11)/rpc/vxi11core.h
-HEADERS += $(VXI11)/rpc/vxi11intr.h
+HEADERS += $(VXI11)/vxi11core.h
+HEADERS += $(VXI11)/vxi11intr.h
 HEADERS += $(VXI11)/vxi11.h
 
-SOURCES += $(VXI11)/rpc/vxi11core_xdr.c
-SOURCES += $(VXI11)/drvVxi11.c
+SOURCES += $(VXI11)/E5810Reboot.c
 
-#SOURCES += ${VXI11}/rpc/vxi11intr_xdr.c
+#SOURCES += $(VXI11)/vxi11intr_xdr.c
+SOURCES += $(VXI11)/vxi11core_xdr.c
+
+
+SOURCES += $(VXI11)/drvVxi11.c
 
 SOURCES += $(VXI11)/E5810Reboot.c
 SOURCES += $(VXI11)/E2050Reboot.c
 SOURCES += $(VXI11)/TDS3000Reboot.c
 
-DBDS += $(VXI11)/drvVxi11.dbd 
 
+DBDS     += $(DEVGPIB)/devGpib.dbd
 
-# # We have to define where we want to install this..
-# #
-# DRV_USBTMC=NO
-# ifeq ($(DRV_USBTMC),YES)
-#   DRVASYNUSBTMC = $(ASYN)/drvAsynUSBTMC
-#   SOURCES +=$(DRVASYNUSBTMC)/drvAsynUSBTMC.c
-# #  asyn_SYS_LIBS += usb-1.0
-#  # USR_LDFLAGS += -L /opt/etherlab/lib
-# # # USR_LDFLAGS += -lethercat
-# # # USR_LDFLAGS += -Wl,-rpath=/opt/etherlab/lib
-#   DBDS    += drvAsynUSBTMC.dbd
-# endif
-
-
-
-# vxWorks and RTEMS
-# NI1014 = $(ASYN)/ni1014
-# SOURCES += $(NI1014)/drvNi1014.c
-# DBDS     += $(NI1014)/drvNi1014.dbd
-
-
-
-
-DEVGPIB = $(ASYN)/devGpib
 HEADERS += $(DEVGPIB)/devGpib.h
 HEADERS += $(DEVGPIB)/devSupportGpib.h
 HEADERS += $(DEVGPIB)/devCommonGpib.h
-DBDS     += $(DEVGPIB)/devGpib.dbd
-ifneq ($(EPICS_LIBCOM_ONLY),YES)
-  SOURCES += $(DEVGPIB)/devCommonGpib.c
-  SOURCES += $(DEVGPIB)/devSupportGpib.c
-endif
+
+SOURCES += $(DEVGPIB)/devCommonGpib.c
+SOURCES += $(DEVGPIB)/devSupportGpib.c
 SOURCES += $(DEVGPIB)/boSRQonOff.c
 
 
 
-
-
-# The following rule should be executed once,
-# However, driver.makefile has no idea how to handle this. Or
-# I don't know where I can do this within driver.makefile.
-#
-# If not, drvVxi11$(DEP) (drvVxi11.d) is triggered infinitely
-
-# ifdef CATEGORY
-#     ifdef TEST
-#         CATEGORY_TEST_DEFINED = 1
-#     else
-#          echo "TEST not defined"
-#     endif
-# else
-#     echo "CATEGORY not defined"
-# endif
-
-
+# For 3.14
+#drvVxi11$(OBJ): ../$(VXI11)/vxi11intr.h
+# For 3.15
 drvVxi11$(DEP): ../$(VXI11)/vxi11intr.h ../$(VXI11)/vxi11core.h
-
-
-vxi11core_xdr.$(DEP): ../$(VXI11)/vxi11core.h
+vxi11core_xdr.c$(DEP): ../$(VXI11)/vxi11core.h
 
 ifdef T_A
-ifneq ($(findstring $(OS_CLASS),vxWorks RTEMS),)
 
-vxi11core.h vxi11core_xdr.c vxi11intr.h vxi11intr_xdr.c : \
-% : ../vxi11/rpc/%
-	cp $< $@
-vxi11core_xdr.o: vxi11core.h
-vxi11intr_xrd.o: vxi11intr.h
+.SECONDARY: ../$(VXI11)/vxi11core_xdr.c ../$(VXI11)/vxi11intr_xdr.c
 
-else
+%.h %_xdr.c: %.rpcl
+	@echo "@ $@"
+	@echo "EPICS MSI $(MSI3_15)"
+	@echo "EPICS PERL $(PERL)"
+	@echo "$(DBTORECORDTYPEH)"
+	cp $< .
+	rpcgen $*.rpcl
 
-.SECONDARY: vxi11core_xdr.c vxi11intr_xdr.c
+endif
 
-ifneq ($(COMPILE),YES)
-%.h %_xdr.c: ../vxi11/%.rpcl
+
+# It is weird to generate a tentative header in asynRecord directory
+# in order to compile other files,
+# at the end of driver.Makefile it will be replaced with asynRecord.dbd (from driver.makefile)
+# I think, however, I have to check them later..
+#
+asynRecord$(DEP): ../$(ASYNRECORD)/asynRecord.h
+
+ifdef T_A
+
+.SECONDARY: ../$(ASYNRECORD)/asynRecord.c
+
+%.h %.c: %.dbd
 	@echo "@ $@"
 	@echo "% $%"
 	@echo "< $<"
@@ -314,16 +275,8 @@ ifneq ($(COMPILE),YES)
 	@echo "+ $+"
 	@echo "| $|"
 	@echo "* $*"
-	@echo "*F $(*F)"
-	cp $< .
-	rpcgen $(RPCGEN_FLAGS_$(OS_CLASS)) $(*F).rpcl
-	rm drvVxi11$(DEP)
-
-COMPILE=YES
+	@echo "EPICS MSI $(MSI3_15)"
+	@echo "EPICS PERL $(PERL)"
+	@echo "$(DBTORECORDTYPEH)"
+	$(DBTORECORDTYPEH)  $(USR_INCLUDES) -I$(EPICS_BASE)/dbd -o $@ $<
 endif
-
-endif
-
-endif
-
-
