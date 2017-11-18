@@ -1,31 +1,54 @@
+#
+#  Copyright (c) 2107 - Present  Jeong Han Lee
+#  Copyright (c) 2017 - Present  European Spallation Source ERIC
+#
+#  The program is free software: you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation, either version 2 of the
+#  License, or any newer version.
+#
+#  This program is distributed in the hope that it will be useful, but WITHOUT
+#  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+#  more details.
+#
+#  You should have received a copy of the GNU General Public License along with
+#  this program. If not, see https://www.gnu.org/licenses/gpl-2.0.txt
+#
+# Author  : Jeong Han Lee
+# email   : han.lee@esss.se
+# Date    : 
+# version : 
 
-# Get where_am_I before include driver.makefile
-# if after driver.makefile where_am_I is the epics base
-# 
+# Get where_am_I before include driver.makefile.
+# After driver.makefile, where_am_I is the epics base,
+# so we cannot use it
+#
+#
 where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 include ${REQUIRE_TOOLS}/driver.makefile
 
-EPICS_LIBCOM_ONLY=NO
-
+# 
 USR_CFLAGS   += -Wno-unused-variable
 USR_CFLAGS   += -Wno-unused-function
 USR_CPPFLAGS += -Wno-unused-variable
 USR_CPPFLAGS += -Wno-unused-function
 
 
+
+
 ASYN = asyn
 
-
-# asynRecord.h should be converted first
-#
-
-# Order the sources compiling....
+# Default Dependency order of the sources 
+# for the community epics makefile
+# 
 
 DEVGPIB:=$(ASYN)/devGpib
 VXI11:=$(ASYN)/vxi11
 ASYNRECORD:=$(ASYN)/asynRecord
 DEVEPICS:=$(ASYN)/devEpics
+ASYNPORTCLIENT:=$(ASYN)/asynPortClient
 ASYNPORTDRIVER:=$(ASYN)/asynPortDriver
 MISCELLANEOUS:=$(ASYN)/miscellaneous
 INTERFACES:=$(ASYN)/interfaces
@@ -39,32 +62,40 @@ USR_INCLUDES += -I$(where_am_I)/$(VXI11)
 USR_INCLUDES += -I$(where_am_I)/$(ASYNRECORD)
 USR_INCLUDES += -I$(where_am_I)/$(DEVEPICS)
 USR_INCLUDES += -I$(where_am_I)/$(ASYNPORTDRIVER)
+USR_INCLUDES += -I$(where_am_I)/$(ASYNPORTDRIVER)/exceptions
 USR_INCLUDES += -I$(where_am_I)/$(MISCELLANEOUS)
 USR_INCLUDES += -I$(where_am_I)/$(INTERFACES)
 USR_INCLUDES += -I$(where_am_I)/$(DRVASYNSERIAL)
 USR_INCLUDES += -I$(where_am_I)/$(ASYNGPIB)
 USR_INCLUDES += -I$(where_am_I)/$(ASYNDRIVER)
 
+
+#
 HEADERS += $(ASYNDRIVER)/asynDriver.h
 HEADERS += $(ASYNDRIVER)/epicsInterruptibleSyscall.h
 
+SOURCES += $(ASYNDRIVER)/asynManager.c
+SOURCES += $(ASYNDRIVER)/epicsInterruptibleSyscall.c
+
+
+#
 HEADERS += $(ASYNGPIB)/asynGpibDriver.h
 SOURCES += $(ASYNGPIB)/asynGpib.c
 
 
+#
 HEADERS += $(DRVASYNSERIAL)/drvAsynSerialPort.h
 SOURCES += $(DRVASYNSERIAL)/drvAsynSerialPort.c
-DBDS     += $(DRVASYNSERIAL)/drvAsynSerialPort.dbd
+DBDS    += $(DRVASYNSERIAL)/drvAsynSerialPort.dbd
+
 
 HEADERS += $(DRVASYNSERIAL)/drvAsynIPPort.h
-HEADERS += $(DRVASYNSERIAL)/drvAsynIPServerPort.h
-
 SOURCES += $(DRVASYNSERIAL)/drvAsynIPPort.c
 SOURCES += $(DRVASYNSERIAL)/drvAsynIPServerPort.c
-DBDS     += $(DRVASYNSERIAL)/drvAsynIPPort.dbd
+DBDS    += $(DRVASYNSERIAL)/drvAsynIPPort.dbd
+HEADERS += $(DRVASYNSERIAL)/drvAsynIPServerPort.h
 
-
-
+#
 HEADERS += $(INTERFACES)/asynInt32.h
 HEADERS += $(INTERFACES)/asynInt32SyncIO.h
 HEADERS += $(INTERFACES)/asynUInt32Digital.h
@@ -121,7 +152,8 @@ SOURCES += $(INTERFACES)/asynOptionSyncIO.c
 SOURCES += $(INTERFACES)/asynStandardInterfacesBase.c
 
 
-
+#
+DBDS    += $(MISCELLANEOUS)/asyn.dbd
 HEADERS += $(MISCELLANEOUS)/asynShellCommands.h
 HEADERS += $(MISCELLANEOUS)/asynInterposeCom.h
 HEADERS += $(MISCELLANEOUS)/asynInterposeEos.h
@@ -131,11 +163,9 @@ SOURCES += $(MISCELLANEOUS)/asynInterposeCom.c
 SOURCES += $(MISCELLANEOUS)/asynInterposeEos.c
 SOURCES += $(MISCELLANEOUS)/asynInterposeFlush.c
 
-DBDS     += $(MISCELLANEOUS)/asyn.dbd
 
 
-
-
+#
 HEADERS += $(ASYNPORTDRIVER)/exceptions/ParamListInvalidIndex.h
 HEADERS += $(ASYNPORTDRIVER)/exceptions/ParamListParamNotFound.h
 HEADERS += $(ASYNPORTDRIVER)/exceptions/ParamValNotDefined.h
@@ -151,28 +181,38 @@ SOURCES += $(ASYNPORTDRIVER)/exceptions/ParamValWrongType.cpp
 SOURCES += $(ASYNPORTDRIVER)/exceptions/ParamValValueNotChanged.cpp
 
 
+HEADERS += $(ASYNPORTDRIVER)/asynParamType.h
+HEADERS += $(ASYNPORTDRIVER)/paramErrors.h
+HEADERS += $(ASYNPORTDRIVER)/asynPortDriver.h
+SOURCES += $(ASYNPORTDRIVER)/paramVal.cpp
+SOURCES += $(ASYNPORTDRIVER)/asynPortDriver.cpp
+
+#
+HEADERS += $(ASYNPORTCLIENT)/asynPortClient.h
+SOURCES += $(ASYNPORTCLIENT)/asynPortClient.cpp
 
 
-DBDS       += $(DEVEPICS)/devAsynInt8Array.dbd
-DBDS       += $(DEVEPICS)/devAsynInt16Array.dbd
-DBDS       += $(DEVEPICS)/devAsynInt32Array.dbd
-DBDS       += $(DEVEPICS)/devAsynFloat32Array.dbd
-DBDS       += $(DEVEPICS)/devAsynFloat64Array.dbd
 
-DBDS       += $(DEVEPICS)/devAsynOctet.dbd
-DBDS       += $(DEVEPICS)/devAsynInt32.dbd
-DBDS       += $(DEVEPICS)/devAsynFloat64.dbd
-DBDS       += $(DEVEPICS)/devAsynUInt32Digital.dbd
-DBDS       += $(DEVEPICS)/devAsynFloat64TimeSeries.dbd
-DBDS       += $(DEVEPICS)/devAsynInt32TimeSeries.dbd
-DBDS       += $(DEVEPICS)/devEpics.dbd
+#
+DBDS      += $(DEVEPICS)/devAsynOctet.dbd
+DBDS      += $(DEVEPICS)/devAsynInt32.dbd
+DBDS      += $(DEVEPICS)/devAsynInt8Array.dbd
+DBDS      += $(DEVEPICS)/devAsynInt16Array.dbd
+DBDS      += $(DEVEPICS)/devAsynInt32Array.dbd
+DBDS      += $(DEVEPICS)/devAsynInt32TimeSeries.dbd
+DBDS      += $(DEVEPICS)/devAsynUInt32Digital.dbd
+DBDS      += $(DEVEPICS)/devAsynFloat64.dbd
+DBDS      += $(DEVEPICS)/devAsynFloat32Array.dbd
+DBDS      += $(DEVEPICS)/devAsynFloat64Array.dbd
+DBDS      += $(DEVEPICS)/devAsynFloat64TimeSeries.dbd
+DBDS      += $(DEVEPICS)/devEpics.dbd
 
 
 TEMPLATES += $(DEVEPICS)/asynInt32TimeSeries.db
 TEMPLATES += $(DEVEPICS)/asynFloat64TimeSeries.db
 
-
 HEADERS   += $(DEVEPICS)/asynEpicsUtils.h
+
 SOURCES   += $(DEVEPICS)/devAsynOctet.c
 SOURCES   += $(DEVEPICS)/asynEpicsUtils.c
 SOURCES   += $(DEVEPICS)/devAsynInt32.c
@@ -186,52 +226,50 @@ SOURCES   += $(DEVEPICS)/devAsynFloat32Array.c
 SOURCES   += $(DEVEPICS)/devAsynFloat64Array.c
 SOURCES   += $(DEVEPICS)/devAsynFloat64TimeSeries.c
 
-
-
-# Should check it...
-
+#
 #DBDS      += $(ASYNRECORD)/asynRecord.dbd
 DBDS      += $(ASYNRECORD)/devAsynRecord.dbd
 SOURCES   += $(ASYNRECORD)/asynRecord.c
 SOURCES   += $(ASYNRECORD)/drvAsyn.c
-
 TEMPLATES += $(ASYNRECORD)/asynRecord.db
 
 
 
 
 
-DBDS += $(VXI11)/drvVxi11.dbd
+#HEADERS += $(VXI11)/drvVxi11.h
+#HEADERS += $(VXI11)/osiRpc.h
+#HEADERS += $(VXI11)/vxi11core.h
+#HEADERS += $(VXI11)/vxi11intr.h
+#HEADERS += $(VXI11)/vxi11.h
 
-HEADERS += $(VXI11)/drvVxi11.h
-HEADERS += $(VXI11)/osiRpc.h
-HEADERS += $(VXI11)/vxi11core.h
-HEADERS += $(VXI11)/vxi11intr.h
-HEADERS += $(VXI11)/vxi11.h
-
-SOURCES += $(VXI11)/E5810Reboot.c
-
-#SOURCES += $(VXI11)/vxi11intr_xdr.c
+##SOURCES += $(VXI11)/vxi11intr_xdr.c
 SOURCES += $(VXI11)/vxi11core_xdr.c
-
-
 SOURCES += $(VXI11)/drvVxi11.c
-
 SOURCES += $(VXI11)/E5810Reboot.c
 SOURCES += $(VXI11)/E2050Reboot.c
 SOURCES += $(VXI11)/TDS3000Reboot.c
+DBDS    += $(VXI11)/drvVxi11.dbd
 
 
-DBDS     += $(DEVGPIB)/devGpib.dbd
+#
+ifeq ($(DRV_USBTMC),YES)
+  DRVASYNUSBTMC:=$(ASYN)/drvAsynUSBTMC
+  SOURCES += $(DRVASYNUSBTMC)/drvAsynUSBTMC.c
+  DBDS    += $(DRVASYNUSBTMC)/drvAsynUSBTMC.dbd
+  USR_INCLUDES += -I/usr/include/libusb-1.0
+  USR_LDFLAGS += -lusb-1.0
+endif
 
+
+#
 HEADERS += $(DEVGPIB)/devGpib.h
 HEADERS += $(DEVGPIB)/devSupportGpib.h
 HEADERS += $(DEVGPIB)/devCommonGpib.h
-
 SOURCES += $(DEVGPIB)/devCommonGpib.c
 SOURCES += $(DEVGPIB)/devSupportGpib.c
 SOURCES += $(DEVGPIB)/boSRQonOff.c
-
+DBDS    += $(DEVGPIB)/devGpib.dbd
 
 
 # For 3.14
@@ -267,16 +305,16 @@ ifdef T_A
 .SECONDARY: ../$(ASYNRECORD)/asynRecord.c
 
 %.h %.c: %.dbd
-	@echo "@ $@"
-	@echo "% $%"
-	@echo "< $<"
-	@echo "? $?"
-	@echo "^ $^"
-	@echo "+ $+"
-	@echo "| $|"
-	@echo "* $*"
-	@echo "EPICS MSI $(MSI3_15)"
-	@echo "EPICS PERL $(PERL)"
-	@echo "$(DBTORECORDTYPEH)"
+#	@echo "@ $@"
+#	@echo "% $%"
+#	@echo "< $<"
+#	@echo "? $?"
+#	@echo "^ $^"
+#	@echo "+ $+"
+#	@echo "| $|"
+#	@echo "* $*"
+#	@echo "EPICS MSI $(MSI3_15)"
+#	@echo "EPICS PERL $(PERL)"
+#	@echo "$(DBTORECORDTYPEH)"
 	$(DBTORECORDTYPEH)  $(USR_INCLUDES) -I$(EPICS_BASE)/dbd -o $@ $<
 endif

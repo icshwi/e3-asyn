@@ -56,11 +56,12 @@ endif
 M_OPTIONS := -C $(EPICS_MODULE_SRC_PATH)
 M_OPTIONS += -f $(ESS_MODULE_MAKEFILE)
 M_OPTIONS += LIBVERSION="$(LIBVERSION)"
-M_OPTIONS += PROJECT="$(EPICS_MODULE_NAME)epics"
+M_OPTIONS += PROJECT="$(EPICS_MODULE_NAME)"
 M_OPTIONS += EPICS_MODULES="$(EPICS_MODULES)"
 M_OPTIONS += EPICS_LOCATION="$(EPICS_LOCATION)"
 M_OPTIONS += DEFAULT_EPICS_VERSIONS="$(DEFAULT_EPICS_VERSIONS)"
 M_OPTIONS += BUILDCLASSES="Linux"
+M_OPTIONS += DRV_USBTMC="$(DRV_USBTMC)"
 
 
 # # help is defined in 
@@ -92,7 +93,6 @@ install: uninstall
 ## Uninstall "Require" Module in order not to use it
 uninstall: conf
 	$(QUIET) sudo -E bash -c 'make $(M_OPTIONS) uninstall'
-
 
 
 ## Build the EPICS Module
