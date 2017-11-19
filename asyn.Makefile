@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2107 - Present  Jeong Han Lee
+#  Copyright (c) 2017 - Present  Jeong Han Lee
 #  Copyright (c) 2017 - Present  European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
@@ -302,6 +302,8 @@ asynRecord$(DEP): ../$(ASYNRECORD)/asynRecord.h
 
 ifdef T_A
 
+USR_DBDFLAGS += -I . -I ..
+
 .SECONDARY: ../$(ASYNRECORD)/asynRecord.c
 
 %.h %.c: %.dbd
@@ -316,5 +318,5 @@ ifdef T_A
 #	@echo "EPICS MSI $(MSI3_15)"
 #	@echo "EPICS PERL $(PERL)"
 #	@echo "$(DBTORECORDTYPEH)"
-	$(DBTORECORDTYPEH)  $(USR_INCLUDES) -I$(EPICS_BASE)/dbd -o $@ $<
+	$(DBTORECORDTYPEH)  $(USR_DBDFLAGS) -o $@ $<
 endif
