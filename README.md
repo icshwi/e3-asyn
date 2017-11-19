@@ -1,6 +1,22 @@
 # e3-asyn
 
+## SUPPORT
+### DRV_USBTMC
 
+* Initialize repository
+```
+make init
+```
+* Enable it via editing configure/CONFIG
+```
+DRV_USBTMC:=YES
+```
+* build
+```
+make env
+make build
+make install
+```
 
 ## NON SUPPORTS 
 ### NI1014 : NI GPIB-1014
