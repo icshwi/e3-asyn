@@ -283,10 +283,10 @@ ifdef T_A
 .SECONDARY: ../$(VXI11)/vxi11core_xdr.c ../$(VXI11)/vxi11intr_xdr.c
 
 %.h %_xdr.c: %.rpcl
-	@echo "@ $@"
-	@echo "EPICS MSI $(MSI3_15)"
-	@echo "EPICS PERL $(PERL)"
-	@echo "$(DBTORECORDTYPEH)"
+#	@echo "@ $@"
+#	@echo "EPICS MSI $(MSI3_15)"
+#	@echo "EPICS PERL $(PERL)"
+#	@echo "$(DBTORECORDTYPEH)"
 	cp $< .
 	rpcgen $*.rpcl
 
