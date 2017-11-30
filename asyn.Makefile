@@ -17,24 +17,20 @@
 #
 # Author  : Jeong Han Lee
 # email   : han.lee@esss.se
-# Date    : 
-# version : 
+# Date    : Thursday, November 30 14:06:20 CET 2017
+# version : 0.0.1
 
-# Get where_am_I before include driver.makefile.
-# After driver.makefile, where_am_I is the epics base,
-# so we cannot use it
-#
-#
 where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-include ${REQUIRE_TOOLS}/driver.makefile
+include $(REQUIRE_TOOLS)/driver.makefile
 
-# 
+
 USR_CFLAGS   += -Wno-unused-variable
 USR_CFLAGS   += -Wno-unused-function
+USR_CFLAGS   += -Wno-unused-but-set-variable
 USR_CPPFLAGS += -Wno-unused-variable
 USR_CPPFLAGS += -Wno-unused-function
-
+USR_CPPFLAGS += -Wno-unused-but-set-variable
 
 
 
@@ -226,11 +222,17 @@ SOURCES   += $(DEVEPICS)/devAsynFloat32Array.c
 SOURCES   += $(DEVEPICS)/devAsynFloat64Array.c
 SOURCES   += $(DEVEPICS)/devAsynFloat64TimeSeries.c
 
-#
-#DBDS      += $(ASYNRECORD)/asynRecord.dbd
-DBDS      += $(ASYNRECORD)/devAsynRecord.dbd
-SOURCES   += $(ASYNRECORD)/asynRecord.c
+
+DBDINC_SRCS += $(ASYNRECORD)/asynRecord.c
+DBDINC_DBDS = $(subst .c,.dbd,   $(DBDINC_SRCS:$(ASYNRECORD)/%=%))
+DBDINC_HDRS = $(subst .c,.h,     $(DBDINC_SRCS:$(ASYNRECORD)/%=%))
+DBDINC_DEPS = $(subst .c,$(DEP), $(DBDINC_SRCS:$(ASYNRECORD)/%=%))
+
+HEADERS   += $(DBDINC_HDRS)
 SOURCES   += $(ASYNRECORD)/drvAsyn.c
+SOURCES   += $(DBDINC_SRCS)
+DBDS      += $(ASYNRECORD)/devAsynRecord.dbd
+
 TEMPLATES += $(ASYNRECORD)/asynRecord.db
 
 
@@ -293,30 +295,10 @@ ifdef T_A
 endif
 
 
-# It is weird to generate a tentative header in asynRecord directory
-# in order to compile other files,
-# at the end of driver.Makefile it will be replaced with asynRecord.dbd (from driver.makefile)
-# I think, however, I have to check them later..
-#
-asynRecord$(DEP): ../$(ASYNRECORD)/asynRecord.h
 
-ifdef T_A
+$(DBDINC_DEPS): $(DBDINC_HDRS)
 
-USR_DBDFLAGS += -I . -I ..
-
-.SECONDARY: ../$(ASYNRECORD)/asynRecord.c
-
-%.h %.c: %.dbd
-#	@echo "@ $@"
-#	@echo "% $%"
-#	@echo "< $<"
-#	@echo "? $?"
-#	@echo "^ $^"
-#	@echo "+ $+"
-#	@echo "| $|"
-#	@echo "* $*"
-#	@echo "EPICS MSI $(MSI3_15)"
-#	@echo "EPICS PERL $(PERL)"
-#	@echo "$(DBTORECORDTYPEH)"
+.dbd.h:
 	$(DBTORECORDTYPEH)  $(USR_DBDFLAGS) -o $@ $<
-endif
+
+
