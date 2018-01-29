@@ -1,0 +1,14 @@
+#
+EPICS_MODULE_NAME:=asyn
+EPICS_MODULE_TAG:=tags/R4-32
+#
+E3_MODULE_VERSION:=4.32.0
+
+
+#
+# In most case, we don't need to touch the following variables.
+#
+E3_MODULE_NAME:=$(EPICS_MODULE_NAME)
+E3_MODULE_SRC_PATH:=$(EPICS_MODULE_NAME)
+E3_MODULE_MAKEFILE:=$(EPICS_MODULE_NAME).Makefile
+
