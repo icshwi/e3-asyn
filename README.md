@@ -7,7 +7,7 @@
 ```
 make init
 ```
-* Enable it via editing configure/CONFIG
+* Enable it via editing configure/CONFIG_OPTIONS
 ```
 DRV_USBTMC:=YES
 ```
