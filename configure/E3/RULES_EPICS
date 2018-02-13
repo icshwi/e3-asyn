@@ -5,7 +5,12 @@
 
 epics:
 	$(QUIET)echo "EPICS_BASE=$(EPICS_BASE)"       > $(TOP)/$(E3_MODULE_SRC_PATH)/configure/RELEASE
-#	$(QUIET)echo "INSTALL_LOCATION=$(M_DEVLIB2)"  > $(TOP)/$(E3_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET)echo "CHECK_RELEASE = YES"             > $(TOP)/$(E3_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET)echo "LINUX_GPIB=NO"                  >> $(TOP)/$(E3_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET)echo "ifeq (linux-x86_64, $(T_A))"    >> $(TOP)/$(E3_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET)echo "DRV_USBTMC=YES"                 >> $(TOP)/$(E3_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET)echo "endif"                         >> $(TOP)/$(E3_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET)echo "INSTALL_LOCATION=$(M_ASYN)"     >> $(TOP)/$(E3_MODULE_SRC_PATH)/configure/CONFIG_SITE
 	$(SUDOBASH) "$(MAKE) -C $(E3_MODULE_SRC_PATH)"
 
 epics-clean:
