@@ -7,5 +7,8 @@
 # USR_LDFLAGS
 # $ pkg-config --libs libusb-1.0
 # $ -lusb-1.0 
-export DRV_USBTMC:=NO
 
+ifeq (linux-x86_64, $(T_A))
+  DRV_USBTMC=YES
+  export DRV_USBTMC
+endif
