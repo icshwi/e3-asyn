@@ -16,9 +16,9 @@
 #  this program. If not, see https://www.gnu.org/licenses/gpl-2.0.txt
 #
 # Author  : Jeong Han Lee
-# email   : han.lee@esss.se
-# Date    : Thursday, November 30 14:06:20 CET 2017
-# version : 0.0.1
+# email   : jeonghan.lee@gmail.com
+# Date    : Saturday, February 17 00:47:37 CET 2018
+# version : 0.0.2
 
 where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
@@ -53,17 +53,17 @@ ASYNGPIB:=$(ASYN)/asynGpib
 ASYNDRIVER:=$(ASYN)/asynDriver
 
 
-USR_INCLUDES += -I$(where_am_I)/$(DEVGPIB)
-USR_INCLUDES += -I$(where_am_I)/$(VXI11)
-USR_INCLUDES += -I$(where_am_I)/$(ASYNRECORD)
-USR_INCLUDES += -I$(where_am_I)/$(DEVEPICS)
-USR_INCLUDES += -I$(where_am_I)/$(ASYNPORTDRIVER)
-USR_INCLUDES += -I$(where_am_I)/$(ASYNPORTDRIVER)/exceptions
-USR_INCLUDES += -I$(where_am_I)/$(MISCELLANEOUS)
-USR_INCLUDES += -I$(where_am_I)/$(INTERFACES)
-USR_INCLUDES += -I$(where_am_I)/$(DRVASYNSERIAL)
-USR_INCLUDES += -I$(where_am_I)/$(ASYNGPIB)
-USR_INCLUDES += -I$(where_am_I)/$(ASYNDRIVER)
+USR_INCLUDES += -I$(where_am_I)$(DEVGPIB)
+USR_INCLUDES += -I$(where_am_I)$(VXI11)
+USR_INCLUDES += -I$(where_am_I)$(ASYNRECORD)
+USR_INCLUDES += -I$(where_am_I)$(DEVEPICS)
+USR_INCLUDES += -I$(where_am_I)$(ASYNPORTDRIVER)
+USR_INCLUDES += -I$(where_am_I)$(ASYNPORTDRIVER)/exceptions
+USR_INCLUDES += -I$(where_am_I)$(MISCELLANEOUS)
+USR_INCLUDES += -I$(where_am_I)$(INTERFACES)
+USR_INCLUDES += -I$(where_am_I)$(DRVASYNSERIAL)
+USR_INCLUDES += -I$(where_am_I)$(ASYNGPIB)
+USR_INCLUDES += -I$(where_am_I)$(ASYNDRIVER)
 
 
 #
@@ -255,12 +255,15 @@ DBDS    += $(VXI11)/drvVxi11.dbd
 
 
 #
+# We only support libusb-1.0 in linux-x86_64 architecture
 ifeq ($(DRV_USBTMC),YES)
+ifeq "$(T_A)" "linux-x86_64"
   DRVASYNUSBTMC:=$(ASYN)/drvAsynUSBTMC
   SOURCES += $(DRVASYNUSBTMC)/drvAsynUSBTMC.c
   DBDS    += $(DRVASYNUSBTMC)/drvAsynUSBTMC.dbd
   USR_INCLUDES += -I/usr/include/libusb-1.0
   USR_LDFLAGS += -lusb-1.0
+endif
 endif
 
 

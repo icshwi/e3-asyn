@@ -1,6 +1,7 @@
 # e3-asyn
 
 ## SUPPORT
+
 ### DRV_USBTMC
 
 * Initialize repository
@@ -11,6 +12,19 @@ make init
 ```
 DRV_USBTMC:=YES
 ```
+However, this option is vaild only for linux-x86_64 architecture. If your arch is not linux-x86_64, it will be ignored within asyn.Makefile. The libusb-1.0.0 should be installed on host system, for Debian system, one could use the following option:
+```
+apt-get install libusb-1.0-0-dev libusb-1.0-0
+```
+And USR_INCLUDES and USR_LDFLAGS can be extracted via
+```
+$ pkg-config --cflags libusb-1.0
+-I/usr/include/libusb-1.0
+$ pkg-config --libs libusb-1.0
+$ -lusb-1.0
+```
+
+
 * build
 ```
 make env
