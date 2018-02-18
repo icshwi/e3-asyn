@@ -14,8 +14,15 @@ DRV_USBTMC:=YES
 ```
 However, this option is vaild only for linux-x86_64 architecture. If your arch is not linux-x86_64, it will be ignored within asyn.Makefile. The libusb-1.0.0 should be installed on host system, for Debian system, one could use the following option:
 ```
-apt-get install libusb-1.0-0-dev libusb-1.0-0
+$ apt-get install libusb-1.0-0-dev
 ```
+
+For Redhat system, the following package should be installed
+
+```
+$ yum install libusbx-dev
+```
+
 And USR_INCLUDES and USR_LDFLAGS can be extracted via
 ```
 $ pkg-config --cflags libusb-1.0
