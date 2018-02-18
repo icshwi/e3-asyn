@@ -8,7 +8,10 @@
 ```
 make init
 ```
-* Enable it via editing configure/CONFIG_OPTIONS
+* USBTMC support
+Note that Ubuntu OS (LTS, and 17.10) are not supported. If one would like to use USBTMC, please use CentOS or Debian.
+
+Enable it via editing configure/CONFIG_OPTIONS
 ```
 DRV_USBTMC:=YES
 ```
@@ -27,6 +30,7 @@ And USR_INCLUDES and USR_LDFLAGS can be extracted via
 ```
 $ pkg-config --cflags libusb-1.0
 -I/usr/include/libusb-1.0
+
 $ pkg-config --libs libusb-1.0
 $ -lusb-1.0
 ```
