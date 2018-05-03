@@ -17,8 +17,8 @@
 #
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Saturday, February 17 00:47:37 CET 2018
-# version : 0.0.2
+# Date    : Thursday, May  3 10:32:56 CEST 2018
+# version : 0.1.0
 
 where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
@@ -255,17 +255,23 @@ DBDS    += $(VXI11)/drvVxi11.dbd
 
 
 #
-# We only support libusb-1.0 in linux-x86_64 architecture
-ifeq ($(DRV_USBTMC),YES)
-ifeq "$(T_A)" "linux-x86_64"
-  DRVASYNUSBTMC:=$(ASYN)/drvAsynUSBTMC
-  SOURCES += $(DRVASYNUSBTMC)/drvAsynUSBTMC.c
-  DBDS    += $(DRVASYNUSBTMC)/drvAsynUSBTMC.dbd
-  USR_INCLUDES += -I/usr/include/libusb-1.0
-  USR_LDFLAGS += -lusb-1.0
-endif
-endif
+# driver.Makefile can add USR_INCLUDES and USR_LDFLAGS
+# when we compile it.
+# However, it doesn't include SOURCES and DBD file, thus
+# we cannot use DBDS and SOURCES to add USBTMC.c and USBTMC.dbd.
+# Try-and-Fail, found DBD_SRCS and SRCS
+DRVASYNUSBTMC:=$(ASYN)/drvAsynUSBTMC
+DRVASYNUSBTMC_SRC:=$(DRVASYNUSBTMC)/drvAsynUSBTMC.c
+DRVASYNUSBTMC_DBD:= $(DRVASYNUSBTMC)/drvAsynUSBTMC.dbd
 
+ifeq ($(DRV_USBTMC),YES)
+ifeq ($(T_A),linux-x86_64)
+  USR_INCLUDES += -I/usr/include/libusb-1.0
+  USR_LDFLAGS  += -lusb-1.0
+  DBD_SRCS += $(DRVASYNUSBTMC_DBD)
+  SRCS     += $(DRVASYNUSBTMC_SRC)
+endif
+endif
 
 #
 HEADERS += $(DEVGPIB)/devGpib.h
