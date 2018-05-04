@@ -180,6 +180,8 @@ SOURCES += $(ASYNPORTDRIVER)/exceptions/ParamValValueNotChanged.cpp
 HEADERS += $(ASYNPORTDRIVER)/asynParamType.h
 HEADERS += $(ASYNPORTDRIVER)/paramErrors.h
 HEADERS += $(ASYNPORTDRIVER)/asynPortDriver.h
+# paramVal.h is needed only for nds for LLRF
+HEADERS += $(ASYNPORTDRIVER)/paramVal.h
 SOURCES += $(ASYNPORTDRIVER)/paramVal.cpp
 SOURCES += $(ASYNPORTDRIVER)/asynPortDriver.cpp
 
