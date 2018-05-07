@@ -3,6 +3,4 @@
 DRV_USBTMC:=YES
 
 
-
-### need to export 
-export DRV_USBTMC
+EXPORT_VARS+=DRV_USBTMC
