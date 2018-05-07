@@ -1,3 +1,8 @@
 # The following variable should be in CONFIG_EXPORT
 # 
 DRV_USBTMC:=YES
+
+
+
+### need to export 
+export DRV_USBTMC
