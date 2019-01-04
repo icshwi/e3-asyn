@@ -2,5 +2,8 @@
 # 
 DRV_USBTMC:=NO
 
+## This is only vaild for linux-ppc64e6500 with higher version of asyn 4.34
+TIRPC:=YES
 
 EXPORT_VARS+=DRV_USBTMC
+EXPORT_VARS+=TIRPC

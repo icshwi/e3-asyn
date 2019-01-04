@@ -244,6 +244,13 @@ TEMPLATES += $(ASYNRECORD)/asynRecord.db
 
 
 
+ifeq ($(TIRPC),YES)
+ifeq ($(T_A),linux-ppc64e6500)
+  USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/tirpc
+  LIB_SYS_LIBS += tirpc
+endif
+endif
+
 
 #HEADERS += $(VXI11)/drvVxi11.h
 #HEADERS += $(VXI11)/osiRpc.h
