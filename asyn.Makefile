@@ -247,8 +247,10 @@ TEMPLATES += $(ASYNRECORD)/asynRecord.db
 ifeq ($(TIRPC),YES)
 ifeq ($(T_A),linux-ppc64e6500)
   USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/tirpc
-  LIB_SYS_LIBS += tirpc
+else
+  USR_INCLUDES += -I/usr/include/tirpc
 endif
+  LIB_SYS_LIBS += tirpc
 endif
 
 
