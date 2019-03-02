@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2017 - Present  Jeong Han Lee
+#  Copyright (c) 2017 - 2019  Jeong Han Lee
 #  Copyright (c) 2017 - Present  European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
@@ -17,8 +17,8 @@
 #
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Tuesday, September 18 11:36:39 CEST 2018
-# version : 0.1.2
+# Date    : Sunday, March  3 00:11:49 CET 2019
+# version : 0.1.3
 
 # LEGACY_RSET should be defined before driver.makefile
 # require-ess from 3.0.1
@@ -297,6 +297,8 @@ SOURCES += $(DEVGPIB)/devSupportGpib.c
 SOURCES += $(DEVGPIB)/boSRQonOff.c
 DBDS    += $(DEVGPIB)/devGpib.dbd
 
+SCRIPTS += $(wildcard ../iocsh/*.iocsh)
+
 
 # For 3.14
 #drvVxi11$(OBJ): ../$(VXI11)/vxi11intr.h
@@ -327,10 +329,11 @@ $(DBDINC_DEPS): $(DBDINC_HDRS)
 
 
 
+
 # db rule is the default in RULES_E3, so add the empty one
 
 db:
 #
-.PHONY: vlibs
 vlibs:
 #
+.PHONY: vlibs db
