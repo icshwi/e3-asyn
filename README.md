@@ -1,6 +1,26 @@
 # e3-asyn
 
+The following options are defined in `configure/CONFIG_OPTIONS`
+
+```
+DRV_USBTMC:=NO
+TIRPC:=NO
+```
+
+They can be overridded via
+
+```
+echo "TIRPC:=YES" > configure/CONFIG_OPTIONS.local"
+
+```
+Please make sure that option is enable via `make vars`.
+
+
+
+
 ## SUPPORT
+
+
 
 ### DRV_USBTMC
 

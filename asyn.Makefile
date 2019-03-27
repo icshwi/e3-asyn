@@ -1,6 +1,6 @@
 #
 #  Copyright (c) 2017 - 2019  Jeong Han Lee
-#  Copyright (c) 2017 - Present  European Spallation Source ERIC
+#  Copyright (c) 2017 - 2019  European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -17,8 +17,8 @@
 #
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Sunday, March  3 00:11:49 CET 2019
-# version : 0.1.3
+# Date    : Wednesday, March 27 18:09:09 CET 2019
+# version : 0.1.4
 
 # LEGACY_RSET should be defined before driver.makefile
 # require-ess from 3.0.1
@@ -246,6 +246,8 @@ TEMPLATES += $(ASYNRECORD)/asynRecord.db
 
 ifeq ($(TIRPC),YES)
 ifeq ($(T_A),linux-ppc64e6500)
+  USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/tirpc
+else ifeq ($(T_A),linux-corei7-poky)
   USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/tirpc
 else
   USR_INCLUDES += -I/usr/include/tirpc

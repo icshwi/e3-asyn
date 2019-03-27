@@ -7,5 +7,12 @@ DRV_USBTMC:=NO
 #TIRPC:=YES
 TIRPC:=NO
 
+
 EXPORT_VARS+=DRV_USBTMC
 EXPORT_VARS+=TIRPC
+
+
+
+# The definitions shown below can also be placed in an untracked CONFIG_OPTIONS.local
+-include $(TOP)/configure/CONFIG_OPTIONS.local
+
