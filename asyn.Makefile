@@ -17,8 +17,8 @@
 #
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Wednesday, March 27 18:09:09 CET 2019
-# version : 0.1.4
+# Date    : Thursday, April  4 17:57:31 CEST 2019
+# version : 0.1.5
 
 # LEGACY_RSET should be defined before driver.makefile
 # require-ess from 3.0.1
@@ -245,14 +245,12 @@ TEMPLATES += $(ASYNRECORD)/asynRecord.db
 
 
 ifeq ($(TIRPC),YES)
-ifeq ($(T_A),linux-ppc64e6500)
-  USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/tirpc
-else ifeq ($(T_A),linux-corei7-poky)
-  USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/tirpc
+LIB_SYS_LIBS += tirpc
+ifeq ($(T_A),linux-x86_64)
+USR_INCLUDES += -I/usr/include/tirpc
 else
-  USR_INCLUDES += -I/usr/include/tirpc
+USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/tirpc
 endif
-  LIB_SYS_LIBS += tirpc
 endif
 
 
@@ -283,10 +281,10 @@ DRVASYNUSBTMC_DBD:= $(DRVASYNUSBTMC)/drvAsynUSBTMC.dbd
 
 ifeq ($(DRV_USBTMC),YES)
 ifeq ($(T_A),linux-x86_64)
-  USR_INCLUDES += -I/usr/include/libusb-1.0
-  USR_LDFLAGS  += -lusb-1.0
-  DBD_SRCS += $(DRVASYNUSBTMC_DBD)
-  SRCS     += $(DRVASYNUSBTMC_SRC)
+USR_INCLUDES += -I/usr/include/libusb-1.0
+USR_LDFLAGS  += -lusb-1.0
+DBD_SRCS += $(DRVASYNUSBTMC_DBD)
+SRCS     += $(DRVASYNUSBTMC_SRC)
 endif
 endif
 
