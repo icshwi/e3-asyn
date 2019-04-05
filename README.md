@@ -17,60 +17,32 @@ Please make sure that option is enable via `make vars`.
 
 
 
+## 
 
-## SUPPORT
-
-
-
-### DRV_USBTMC
-
-* Initialize repository
-```
-make init
-```
-* USBTMC support
-Note that Ubuntu OS (LTS, and 17.10) are not supported. If one would like to use USBTMC, please use CentOS or Debian.
-
-Enable it via editing configure/CONFIG_OPTIONS
-```
-DRV_USBTMC:=YES
-```
-However, this option is vaild only for linux-x86_64 architecture. If your arch is not linux-x86_64, it will be ignored within asyn.Makefile. The libusb-1.0.0 should be installed on host system, for Debian system, one could use the following option:
-```
-$ apt-get install libusb-1.0-0-dev
-```
-
-For Redhat system, the following package should be installed
+Cross compilers complained the follows:
 
 ```
-$ yum install libusbx-dev
+In file included from ../asyn/drvAsynSerial/drvAsynSerialPort.c:53:
+../asyn/drvAsynSerial//os/Linux/serial_rs485.h:13: warning: "TIOCGRS485" redefined
+   #define TIOCGRS485                0x542E
+ 
+In file included from /opt/ifc14xx/2.6-4.14/sysroots/ppc64e6500-fsl-linux/usr/include/bits/ioctls.h:23,
+                 from /opt/ifc14xx/2.6-4.14/sysroots/ppc64e6500-fsl-linux/usr/include/sys/ioctl.h:26,
+                 from ../asyn/drvAsynSerial//os/Linux/serial_rs485.h:4,
+                 from ../asyn/drvAsynSerial/drvAsynSerialPort.c:53:
+/opt/ifc14xx/2.6-4.14/sysroots/ppc64e6500-fsl-linux/usr/include/asm/ioctls.h:94: note: this is the location of the previous definition
+ #define TIOCGRS485 0x542e
+ 
+In file included from ../asyn/drvAsynSerial/drvAsynSerialPort.c:53:
+../asyn/drvAsynSerial//os/Linux/serial_rs485.h:14: warning: "TIOCSRS485" redefined
+   #define TIOCSRS485                0x542F
+ 
+In file included from /opt/ifc14xx/2.6-4.14/sysroots/ppc64e6500-fsl-linux/usr/include/bits/ioctls.h:23,
+                 from /opt/ifc14xx/2.6-4.14/sysroots/ppc64e6500-fsl-linux/usr/include/sys/ioctl.h:26,
+                 from ../asyn/drvAsynSerial//os/Linux/serial_rs485.h:4,
+                 from ../asyn/drvAsynSerial/drvAsynSerialPort.c:53:
+/opt/ifc14xx/2.6-4.14/sysroots/ppc64e6500-fsl-linux/usr/include/asm/ioctls.h:95: note: this is the location of the previous definition
+ #define TIOCSRS485 0x542f
 ```
 
-And USR_INCLUDES and USR_LDFLAGS can be extracted via
-```
-$ pkg-config --cflags libusb-1.0
--I/usr/include/libusb-1.0
-
-$ pkg-config --libs libusb-1.0
-$ -lusb-1.0
-```
-
-
-* build
-```
-make env
-make build
-make install
-```
-
-## NON SUPPORTS 
-### NI1014 : NI GPIB-1014
-* http://www.ni.com/pdf/manuals/370945a.pdf
-* The GPIB-1014 is a IEEE 488 interface for the VMEbus
-
-### Linux GPIB
-* http://linux-gpib.sourceforge.net/doc_html/t1.html
-
-### IPAC
-
-### RTEMS and VxWorks
+Technically, due to the same definition, we simply ignore them now (20190405)
