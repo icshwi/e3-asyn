@@ -17,12 +17,12 @@
 #
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Wednesday, March 27 18:09:09 CET 2019
-# version : 0.1.4
+# Date    : Friday, April  5 10:22:32 CEST 2019
+# version : 0.2.0
 
 # LEGACY_RSET should be defined before driver.makefile
 # require-ess from 3.0.1
-LEGACY_RSET = YES
+# LEGACY_RSET = YES
 
 where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(E3_REQUIRE_TOOLS)/driver.makefile
@@ -70,24 +70,33 @@ USR_INCLUDES += -I$(where_am_I)$(ASYNGPIB)
 USR_INCLUDES += -I$(where_am_I)$(ASYNDRIVER)
 
 
+ifeq ($(TIRPC),YES)
+LIB_SYS_LIBS += tirpc
+ifeq ($(T_A),linux-x86_64)
+USR_INCLUDES += -I/usr/include/tirpc
+else
+USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/tirpc
+endif
+endif
+
 #
+# asynDriver
 HEADERS += $(ASYNDRIVER)/asynDriver.h
 HEADERS += $(ASYNDRIVER)/epicsInterruptibleSyscall.h
 
 SOURCES += $(ASYNDRIVER)/asynManager.c
 SOURCES += $(ASYNDRIVER)/epicsInterruptibleSyscall.c
 
-
 #
+# asynGpib
 HEADERS += $(ASYNGPIB)/asynGpibDriver.h
 SOURCES += $(ASYNGPIB)/asynGpib.c
 
-
 #
+# drvAsynSerial
 HEADERS += $(DRVASYNSERIAL)/drvAsynSerialPort.h
 SOURCES += $(DRVASYNSERIAL)/drvAsynSerialPort.c
 DBDS    += $(DRVASYNSERIAL)/drvAsynSerialPort.dbd
-
 
 HEADERS += $(DRVASYNSERIAL)/drvAsynIPPort.h
 SOURCES += $(DRVASYNSERIAL)/drvAsynIPPort.c
@@ -96,6 +105,7 @@ DBDS    += $(DRVASYNSERIAL)/drvAsynIPPort.dbd
 HEADERS += $(DRVASYNSERIAL)/drvAsynIPServerPort.h
 
 #
+# interfaces
 HEADERS += $(INTERFACES)/asynInt32.h
 HEADERS += $(INTERFACES)/asynInt32SyncIO.h
 HEADERS += $(INTERFACES)/asynUInt32Digital.h
@@ -123,8 +133,7 @@ HEADERS += $(INTERFACES)/asynOption.h
 HEADERS += $(INTERFACES)/asynOptionSyncIO.h
 HEADERS += $(INTERFACES)/asynDrvUser.h
 HEADERS += $(INTERFACES)/asynStandardInterfaces.h
-
-
+#
 SOURCES += $(INTERFACES)/asynInt32Base.c
 SOURCES += $(INTERFACES)/asynInt32SyncIO.c
 SOURCES += $(INTERFACES)/asynInt8ArrayBase.c
@@ -151,21 +160,23 @@ SOURCES += $(INTERFACES)/asynCommonSyncIO.c
 SOURCES += $(INTERFACES)/asynOptionSyncIO.c
 SOURCES += $(INTERFACES)/asynStandardInterfacesBase.c
 
-
 #
+# miscellaneous
 DBDS    += $(MISCELLANEOUS)/asyn.dbd
 HEADERS += $(MISCELLANEOUS)/asynShellCommands.h
 HEADERS += $(MISCELLANEOUS)/asynInterposeCom.h
 HEADERS += $(MISCELLANEOUS)/asynInterposeEos.h
 HEADERS += $(MISCELLANEOUS)/asynInterposeFlush.h
+
 SOURCES += $(MISCELLANEOUS)/asynShellCommands.c
 SOURCES += $(MISCELLANEOUS)/asynInterposeCom.c
 SOURCES += $(MISCELLANEOUS)/asynInterposeEos.c
 SOURCES += $(MISCELLANEOUS)/asynInterposeFlush.c
-
-
+SOURCES += $(MISCELLANEOUS)/asynInterposeDelay.c
+SOURCES += $(MISCELLANEOUS)/asynInterposeEcho.c
 
 #
+# asynPortDriver/exceptions
 HEADERS += $(ASYNPORTDRIVER)/exceptions/ParamListInvalidIndex.h
 HEADERS += $(ASYNPORTDRIVER)/exceptions/ParamListParamNotFound.h
 HEADERS += $(ASYNPORTDRIVER)/exceptions/ParamValNotDefined.h
@@ -184,18 +195,22 @@ SOURCES += $(ASYNPORTDRIVER)/exceptions/ParamValValueNotChanged.cpp
 HEADERS += $(ASYNPORTDRIVER)/asynParamType.h
 HEADERS += $(ASYNPORTDRIVER)/paramErrors.h
 HEADERS += $(ASYNPORTDRIVER)/asynPortDriver.h
-# paramVal.h is needed only for nds for LLRF
+# paramVal.h is not defined in the community aync makefile
+# Somehow, old module, nds for LLRF, needs this.
+# Friday, April  5 09:15:40 CEST 2019, han
 HEADERS += $(ASYNPORTDRIVER)/paramVal.h
+#
 SOURCES += $(ASYNPORTDRIVER)/paramVal.cpp
 SOURCES += $(ASYNPORTDRIVER)/asynPortDriver.cpp
 
 #
+# asynPortClient
 HEADERS += $(ASYNPORTCLIENT)/asynPortClient.h
 SOURCES += $(ASYNPORTCLIENT)/asynPortClient.cpp
 
 
-
 #
+# devEpics
 DBDS      += $(DEVEPICS)/devAsynOctet.dbd
 DBDS      += $(DEVEPICS)/devAsynInt32.dbd
 DBDS      += $(DEVEPICS)/devAsynInt8Array.dbd
@@ -242,26 +257,6 @@ DBDS      += $(ASYNRECORD)/devAsynRecord.dbd
 TEMPLATES += $(ASYNRECORD)/asynRecord.db
 
 
-
-
-ifeq ($(TIRPC),YES)
-ifeq ($(T_A),linux-ppc64e6500)
-  USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/tirpc
-else ifeq ($(T_A),linux-corei7-poky)
-  USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/tirpc
-else
-  USR_INCLUDES += -I/usr/include/tirpc
-endif
-  LIB_SYS_LIBS += tirpc
-endif
-
-
-#HEADERS += $(VXI11)/drvVxi11.h
-#HEADERS += $(VXI11)/osiRpc.h
-#HEADERS += $(VXI11)/vxi11core.h
-#HEADERS += $(VXI11)/vxi11intr.h
-#HEADERS += $(VXI11)/vxi11.h
-
 ##SOURCES += $(VXI11)/vxi11intr_xdr.c
 SOURCES += $(VXI11)/vxi11core_xdr.c
 SOURCES += $(VXI11)/drvVxi11.c
@@ -305,6 +300,7 @@ SCRIPTS += $(wildcard ../iocsh/*.iocsh)
 # For 3.14
 #drvVxi11$(OBJ): ../$(VXI11)/vxi11intr.h
 # For 3.15
+
 drvVxi11$(DEP): ../$(VXI11)/vxi11intr.h ../$(VXI11)/vxi11core.h
 vxi11core_xdr.c$(DEP): ../$(VXI11)/vxi11core.h
 
