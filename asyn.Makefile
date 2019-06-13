@@ -55,6 +55,7 @@ INTERFACES:=$(ASYN)/interfaces
 DRVASYNSERIAL:=$(ASYN)/drvAsynSerial
 ASYNGPIB:=$(ASYN)/asynGpib
 ASYNDRIVER:=$(ASYN)/asynDriver
+ASYNTESTPORTDRIVER:=$(ASYN)/../testAsynPortDriverApp/src
 
 
 USR_INCLUDES += -I$(where_am_I)$(DEVGPIB)
@@ -68,6 +69,7 @@ USR_INCLUDES += -I$(where_am_I)$(INTERFACES)
 USR_INCLUDES += -I$(where_am_I)$(DRVASYNSERIAL)
 USR_INCLUDES += -I$(where_am_I)$(ASYNGPIB)
 USR_INCLUDES += -I$(where_am_I)$(ASYNDRIVER)
+USR_INCLUDES += -I$(where_am_I)$(ASYNTESTPORTDRIVER)
 
 
 #
@@ -193,6 +195,13 @@ SOURCES += $(ASYNPORTDRIVER)/asynPortDriver.cpp
 HEADERS += $(ASYNPORTCLIENT)/asynPortClient.h
 SOURCES += $(ASYNPORTCLIENT)/asynPortClient.cpp
 
+
+# testAsynPortDriver
+HEADERS	  += $(ASYNTESTPORTDRIVER)/testAsynPortDriver.h
+SOURCERS  += $(ASYNTESTPORTDRIVER)/testAsynPortDriver.cpp
+SOURCERS  += $(ASYNTESTPORTDRIVER)/testAsynPortDriverMain.cpp
+DBDS	  += $(DEVEPICS)/testAsynPortDriverInclude.dbd
+DBDS      += $(DEVEPICS)/testAsynPortDriver.dbd
 
 
 #
