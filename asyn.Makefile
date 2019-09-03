@@ -20,18 +20,12 @@
 # Date    : Wednesday, September  4 00:01:38 CEST 2019
 # version : 0.1.6
 
-# 0.1.5 : R4-33
-#            
-# 0.1.6 : R4-36 : show two new files such as
-# SOURCES += $(MISCELLANEOUS)/asynInterposeDelay.c
-# SOURCES += $(MISCELLANEOUS)/asynInterposeEcho.c
-# So, this version of asyn.Makefile doesn't have backward compatibility. 
+
+LEGACY_RSET = YES
 
 where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(E3_REQUIRE_TOOLS)/driver.makefile
 include $(E3_REQUIRE_CONFIG)/DECOUPLE_FLAGS
-
-USR_CPPFLAGS += -DUSE_TYPED_RSET
 
 USR_CFLAGS   += -Wno-unused-variable
 USR_CFLAGS   += -Wno-unused-function
