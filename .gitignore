@@ -3,3 +3,6 @@
 .\#*
 *-dev
 *.local
+*.gv
+*.png
+*.svg

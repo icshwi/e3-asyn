@@ -1,28 +1,16 @@
-# e3-asyn
-
-The following options are defined in `configure/CONFIG_OPTIONS`
-
-```
-DRV_USBTMC:=NO
-TIRPC:=NO
-```
-
-They can be overridded via
-
-```
-echo "TIRPC:=YES" > configure/CONFIG_OPTIONS.local"
-
-```
-Please make sure that option is enable via `make vars`.
+e3-asyn
+==
+ESS Site-specific EPICS module : asyn
 
 
+## Dependency Plot
+
+|![asyn dep](docs/asyn.png)|
+| :---: |
+|**Figure 1** Depdendency Tree. |
 
 
-## SUPPORT
-
-
-
-### DRV_USBTMC
+## DRV_USBTMC
 
 * Initialize repository
 ```
@@ -53,14 +41,6 @@ $ pkg-config --cflags libusb-1.0
 
 $ pkg-config --libs libusb-1.0
 $ -lusb-1.0
-```
-
-
-* build
-```
-make env
-make build
-make install
 ```
 
 ## NON SUPPORTS 
