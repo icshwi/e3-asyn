@@ -1,4 +1,5 @@
 [submodule "asyn"]
 	path = asyn
 	url = https://github.com/epics-modules/asyn
-	ignore = dirty	
+	ignore = dirty
+
