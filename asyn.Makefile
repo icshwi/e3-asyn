@@ -96,6 +96,8 @@ HEADERS += $(DRVASYNSERIAL)/drvAsynIPServerPort.h
 #
 HEADERS += $(INTERFACES)/asynInt32.h
 HEADERS += $(INTERFACES)/asynInt32SyncIO.h
+HEADERS += $(INTERFACES)/asynInt64.h
+HEADERS += $(INTERFACES)/asynInt64SyncIO.h
 HEADERS += $(INTERFACES)/asynUInt32Digital.h
 HEADERS += $(INTERFACES)/asynUInt32DigitalSyncIO.h
 HEADERS += $(INTERFACES)/asynFloat64.h
@@ -106,6 +108,8 @@ HEADERS += $(INTERFACES)/asynInt16Array.h
 HEADERS += $(INTERFACES)/asynInt16ArraySyncIO.h
 HEADERS += $(INTERFACES)/asynInt32Array.h
 HEADERS += $(INTERFACES)/asynInt32ArraySyncIO.h
+HEADERS += $(INTERFACES)/asynInt64Array.h
+HEADERS += $(INTERFACES)/asynInt64ArraySyncIO.h
 HEADERS += $(INTERFACES)/asynFloat32Array.h
 HEADERS += $(INTERFACES)/asynFloat32ArraySyncIO.h
 HEADERS += $(INTERFACES)/asynFloat64Array.h
@@ -124,13 +128,17 @@ HEADERS += $(INTERFACES)/asynStandardInterfaces.h
 
 
 SOURCES += $(INTERFACES)/asynInt32Base.c
+SOURCES += $(INTERFACES)/asynInt64Base.c
 SOURCES += $(INTERFACES)/asynInt32SyncIO.c
+SOURCES += $(INTERFACES)/asynInt64SyncIO.c
 SOURCES += $(INTERFACES)/asynInt8ArrayBase.c
 SOURCES += $(INTERFACES)/asynInt8ArraySyncIO.c
 SOURCES += $(INTERFACES)/asynInt16ArrayBase.c
 SOURCES += $(INTERFACES)/asynInt16ArraySyncIO.c
 SOURCES += $(INTERFACES)/asynInt32ArrayBase.c
 SOURCES += $(INTERFACES)/asynInt32ArraySyncIO.c
+SOURCES += $(INTERFACES)/asynInt64ArrayBase.c
+SOURCES += $(INTERFACES)/asynInt64ArraySyncIO.c
 SOURCES += $(INTERFACES)/asynUInt32DigitalBase.c
 SOURCES += $(INTERFACES)/asynUInt32DigitalSyncIO.c
 SOURCES += $(INTERFACES)/asynFloat64Base.c
@@ -201,8 +209,31 @@ HEADERS += $(ASYNPORTCLIENT)/asynPortClient.h
 SOURCES += $(ASYNPORTCLIENT)/asynPortClient.cpp
 
 
+###################################################
+# devEpics.dbd will be generated at build time 
+###################################################
+DBDS      += $(COMMON_DIR)/devEpics.dbd
 
-#
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynOctet.dbd
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynInt32.dbd
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynInt8Array.dbd
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynInt16Array.dbd
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynInt32Array.dbd
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynInt32TimeSeries.dbd
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynUInt32Digital.dbd
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynFloat64.dbd
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynFloat32Array.dbd
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynFloat64Array.dbd
+devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynFloat64TimeSeries.dbd
+
+# only for BASE 7 or 3.16 with modification
+devEpics.dbd_SNIPPETS += $(where_am_I)$(DEVEPICS)/devAsynInt64.dbd
+devEpics.dbd_SNIPPETS += $(where_am_I)$(DEVEPICS)/devAsynInt64Array.dbd
+devEpics.dbd_SNIPPETS += $(where_am_I)$(DEVEPICS)/devAsynInt64TimeSeries.dbd
+
+################################################################
+# These need to be included otherwise asyn.dbd won't have them
+################################################################
 DBDS      += $(DEVEPICS)/devAsynOctet.dbd
 DBDS      += $(DEVEPICS)/devAsynInt32.dbd
 DBDS      += $(DEVEPICS)/devAsynInt8Array.dbd
@@ -214,7 +245,11 @@ DBDS      += $(DEVEPICS)/devAsynFloat64.dbd
 DBDS      += $(DEVEPICS)/devAsynFloat32Array.dbd
 DBDS      += $(DEVEPICS)/devAsynFloat64Array.dbd
 DBDS      += $(DEVEPICS)/devAsynFloat64TimeSeries.dbd
-DBDS      += $(DEVEPICS)/devEpics.dbd
+
+DBDS 	+= $(DEVEPICS)/devAsynInt64.dbd
+DBDS 	+= $(DEVEPICS)/devAsynInt64Array.dbd
+DBDS 	+= $(DEVEPICS)/devAsynInt64TimeSeries.dbd
+#####
 
 
 TEMPLATES += $(DEVEPICS)/asynInt32TimeSeries.db
@@ -235,6 +270,12 @@ SOURCES   += $(DEVEPICS)/devAsynFloat32Array.c
 SOURCES   += $(DEVEPICS)/devAsynFloat64Array.c
 SOURCES   += $(DEVEPICS)/devAsynFloat64TimeSeries.c
 
+# only for BASE 7 or 3.16 with modification
+SOURCES   += $(DEVEPICS)/devAsynInt64.c
+SOURCES   += $(DEVEPICS)/devAsynInt64Array.c
+SOURCES   += $(DEVEPICS)/devAsynInt64TimeSeries.c
+# 
+
 
 DBDINC_SRCS += $(ASYNRECORD)/asynRecord.c
 DBDINC_DBDS = $(subst .c,.dbd,   $(DBDINC_SRCS:$(ASYNRECORD)/%=%))
@@ -247,8 +288,6 @@ SOURCES   += $(DBDINC_SRCS)
 DBDS      += $(ASYNRECORD)/devAsynRecord.dbd
 
 TEMPLATES += $(ASYNRECORD)/asynRecord.db
-
-
 
 
 ifeq ($(TIRPC),YES)
@@ -304,8 +343,19 @@ SOURCES += $(DEVGPIB)/devSupportGpib.c
 SOURCES += $(DEVGPIB)/boSRQonOff.c
 DBDS    += $(DEVGPIB)/devGpib.dbd
 
-SCRIPTS += $(wildcard ../iocsh/*.iocsh)
 
+# 
+# This will generate "devEpics.dbd" with the include statements for other DBDs,
+# the original asyn Makefile has different rules depending on "DBDCAT_COMMAND".
+# Needs to be clarified...
+#
+$(COMMON_DIR)/devEpics.dbd: $(devEpics.dbd_SNIPPETS)
+	$(ECHO) "Creating dbd file $(notdir $@)"
+	@$(RM) $(notdir $@)
+	$(PERL) $(TOOLS)/makeIncludeDbd.pl $(devEpics.dbd_SNIPPETS) $(notdir $@)
+	@$(MV) $(notdir $@) $@
+
+SCRIPTS += $(wildcard ../iocsh/*.iocsh)
 
 # For 3.14
 #drvVxi11$(OBJ): ../$(VXI11)/vxi11intr.h
