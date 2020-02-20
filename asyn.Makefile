@@ -34,6 +34,10 @@ USR_CPPFLAGS += -Wno-unused-variable
 USR_CPPFLAGS += -Wno-unused-function
 USR_CPPFLAGS += -Wno-unused-but-set-variable
 
+# Needed for 64 bits interfaces support
+USR_CFLAGS += -DHAVE_DEVINT64
+USR_CXXFLAGS += -DHAVE_DEVINT64
+
 
 
 ASYN = asyn
@@ -230,6 +234,7 @@ devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynFloat64TimeSeries.dbd
 devEpics.dbd_SNIPPETS += $(where_am_I)$(DEVEPICS)/devAsynInt64.dbd
 devEpics.dbd_SNIPPETS += $(where_am_I)$(DEVEPICS)/devAsynInt64Array.dbd
 devEpics.dbd_SNIPPETS += $(where_am_I)$(DEVEPICS)/devAsynInt64TimeSeries.dbd
+devEpics.dbd_SNIPPETS += $(where_am_I)$(DEVEPICS)/devAsynInt64Misc.dbd
 
 ################################################################
 # These need to be included otherwise asyn.dbd won't have them
@@ -249,8 +254,8 @@ DBDS      += $(DEVEPICS)/devAsynFloat64TimeSeries.dbd
 DBDS 	+= $(DEVEPICS)/devAsynInt64.dbd
 DBDS 	+= $(DEVEPICS)/devAsynInt64Array.dbd
 DBDS 	+= $(DEVEPICS)/devAsynInt64TimeSeries.dbd
+DBDS 	+= $(DEVEPICS)/devAsynInt64Misc.dbd
 #####
-
 
 TEMPLATES += $(DEVEPICS)/asynInt32TimeSeries.db
 TEMPLATES += $(DEVEPICS)/asynFloat64TimeSeries.db
@@ -271,9 +276,9 @@ SOURCES   += $(DEVEPICS)/devAsynFloat64Array.c
 SOURCES   += $(DEVEPICS)/devAsynFloat64TimeSeries.c
 
 # only for BASE 7 or 3.16 with modification
-SOURCES   += $(DEVEPICS)/devAsynInt64.c
 SOURCES   += $(DEVEPICS)/devAsynInt64Array.c
 SOURCES   += $(DEVEPICS)/devAsynInt64TimeSeries.c
+SOURCES   += $(DEVEPICS)/devAsynInt64.c
 # 
 
 
