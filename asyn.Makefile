@@ -213,25 +213,23 @@ SOURCES += $(ASYNPORTCLIENT)/asynPortClient.cpp
 # This block is here to inflate devEpics.dbd with the following .dbd files.
 ############
 DBDCAT += $(COMMON_DIR)/devEpics.dbd 
-# This is a bit of a hack, as the rule that creates the dbd file is in RULES.Db from EPICS_BASE, so we can not touch it.
-DBDCAT_PREFIX = 
 
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynOctet.dbd
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt32.dbd
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt8Array.dbd
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt16Array.dbd
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt32Array.dbd
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt32TimeSeries.dbd
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynUInt32Digital.dbd
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat64.dbd
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat32Array.dbd
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat64Array.dbd
-devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat64TimeSeries.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynOctet.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynInt32.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynInt8Array.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynInt16Array.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynInt32Array.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynInt32TimeSeries.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynUInt32Digital.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynFloat64.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynFloat32Array.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynFloat64Array.dbd
+devEpics_DBD +=   $(DEVEPICS)/devAsynFloat64TimeSeries.dbd
 
 # ESS Supports only Base 7+ in E3
-devEpics_DBD += $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt64.dbd
-devEpics_DBD += $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt64Array.dbd
-devEpics_DBD += $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt64TimeSeries.dbd
+devEpics_DBD += $(DEVEPICS)/devAsynInt64.dbd
+devEpics_DBD += $(DEVEPICS)/devAsynInt64Array.dbd
+devEpics_DBD += $(DEVEPICS)/devAsynInt64TimeSeries.dbd
 
 DBDS += $(devEpics_DBD)
 
@@ -337,9 +335,8 @@ SOURCES += $(DEVGPIB)/boSRQonOff.c
 DBDS    += $(DEVGPIB)/devGpib.dbd
 
 
+# Override the default DBDCAT_COMMAND
 $(COMMON_DIR)/devEpics.dbd: DBDCAT_COMMAND = $(PERL) $(TOOLS)/makeIncludeDbd.pl $(devEpics_DBD) $(notdir $@)
-
-$(COMMON_DIR)/%.dbd: DBDCAT_PREFIX=../
 
 
 SCRIPTS += $(wildcard ../iocsh/*.iocsh)
