@@ -209,47 +209,40 @@ HEADERS += $(ASYNPORTCLIENT)/asynPortClient.h
 SOURCES += $(ASYNPORTCLIENT)/asynPortClient.cpp
 
 
-###################################################
-# devEpics.dbd will be generated at build time 
-###################################################
-DBDS      += $(COMMON_DIR)/devEpics.dbd
+############
+# This block is here to inflate devEpics.dbd with the following .dbd files.
+############
+DBDCAT += $(COMMON_DIR)/devEpics.dbd 
+# This is a bit of a hack, as the rule that creates the dbd file is in RULES.Db from EPICS_BASE, so we can not touch it.
+DBDCAT_PREFIX = 
 
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynOctet.dbd
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynInt32.dbd
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynInt8Array.dbd
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynInt16Array.dbd
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynInt32Array.dbd
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynInt32TimeSeries.dbd
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynUInt32Digital.dbd
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynFloat64.dbd
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynFloat32Array.dbd
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynFloat64Array.dbd
-devEpics.dbd_SNIPPETS +=   $(where_am_I)$(DEVEPICS)/devAsynFloat64TimeSeries.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynOctet.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt32.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt8Array.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt16Array.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt32Array.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt32TimeSeries.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynUInt32Digital.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat64.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat32Array.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat64Array.dbd
+devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat64TimeSeries.dbd
 
 # only for BASE 7 or 3.16 with modification
-devEpics.dbd_SNIPPETS += $(where_am_I)$(DEVEPICS)/devAsynInt64.dbd
-devEpics.dbd_SNIPPETS += $(where_am_I)$(DEVEPICS)/devAsynInt64Array.dbd
-devEpics.dbd_SNIPPETS += $(where_am_I)$(DEVEPICS)/devAsynInt64TimeSeries.dbd
+devEpics_DBD += $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt64.dbd
+devEpics_DBD += $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt64Array.dbd
+devEpics_DBD += $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt64TimeSeries.dbd
 
-################################################################
-# These need to be included otherwise asyn.dbd won't have them
-################################################################
-DBDS      += $(DEVEPICS)/devAsynOctet.dbd
-DBDS      += $(DEVEPICS)/devAsynInt32.dbd
-DBDS      += $(DEVEPICS)/devAsynInt8Array.dbd
-DBDS      += $(DEVEPICS)/devAsynInt16Array.dbd
-DBDS      += $(DEVEPICS)/devAsynInt32Array.dbd
-DBDS      += $(DEVEPICS)/devAsynInt32TimeSeries.dbd
-DBDS      += $(DEVEPICS)/devAsynUInt32Digital.dbd
-DBDS      += $(DEVEPICS)/devAsynFloat64.dbd
-DBDS      += $(DEVEPICS)/devAsynFloat32Array.dbd
-DBDS      += $(DEVEPICS)/devAsynFloat64Array.dbd
-DBDS      += $(DEVEPICS)/devAsynFloat64TimeSeries.dbd
+DBDS += $(devEpics_DBD)
 
-DBDS 	+= $(DEVEPICS)/devAsynInt64.dbd
-DBDS 	+= $(DEVEPICS)/devAsynInt64Array.dbd
-DBDS 	+= $(DEVEPICS)/devAsynInt64TimeSeries.dbd
-#####
+DBD_SRCS += $(DBDCAT)
+
+# We have to include a special file /after/ we have updated DBDCAT.
+include $(E3_REQUIRE_CONFIG)/RULES_DBDCAT
+################
+# Up until here.
+################
+
 
 
 TEMPLATES += $(DEVEPICS)/asynInt32TimeSeries.db
@@ -344,16 +337,10 @@ SOURCES += $(DEVGPIB)/boSRQonOff.c
 DBDS    += $(DEVGPIB)/devGpib.dbd
 
 
-# 
-# This will generate "devEpics.dbd" with the include statements for other DBDs,
-# the original asyn Makefile has different rules depending on "DBDCAT_COMMAND".
-# Needs to be clarified...
-#
-$(COMMON_DIR)/devEpics.dbd: $(devEpics.dbd_SNIPPETS)
-	$(ECHO) "Creating dbd file $(notdir $@)"
-	@$(RM) $(notdir $@)
-	$(PERL) $(TOOLS)/makeIncludeDbd.pl $(devEpics.dbd_SNIPPETS) $(notdir $@)
-	@$(MV) $(notdir $@) $@
+$(COMMON_DIR)/devEpics.dbd: DBDCAT_COMMAND = $(PERL) $(TOOLS)/makeIncludeDbd.pl $(devEpics_DBD) $(notdir $@)
+
+$(COMMON_DIR)/%.dbd: DBDCAT_PREFIX=../
+
 
 SCRIPTS += $(wildcard ../iocsh/*.iocsh)
 
