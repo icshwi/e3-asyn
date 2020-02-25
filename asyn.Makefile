@@ -228,7 +228,7 @@ devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat32Array.dbd
 devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat64Array.dbd
 devEpics_DBD +=   $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynFloat64TimeSeries.dbd
 
-# only for BASE 7 or 3.16 with modification
+# ESS Supports only Base 7+ in E3
 devEpics_DBD += $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt64.dbd
 devEpics_DBD += $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt64Array.dbd
 devEpics_DBD += $(DBDCAT_PREFIX)$(DEVEPICS)/devAsynInt64TimeSeries.dbd
@@ -263,7 +263,7 @@ SOURCES   += $(DEVEPICS)/devAsynFloat32Array.c
 SOURCES   += $(DEVEPICS)/devAsynFloat64Array.c
 SOURCES   += $(DEVEPICS)/devAsynFloat64TimeSeries.c
 
-# only for BASE 7 or 3.16 with modification
+# ESS Supports only Base 7+ in E3
 SOURCES   += $(DEVEPICS)/devAsynInt64.c
 SOURCES   += $(DEVEPICS)/devAsynInt64Array.c
 SOURCES   += $(DEVEPICS)/devAsynInt64TimeSeries.c
