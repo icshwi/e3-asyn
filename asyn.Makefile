@@ -1,6 +1,7 @@
 #
-#  Copyright (c) 2017 - 2019  Jeong Han Lee
-#  Copyright (c) 2017 - 2019  European Spallation Source ERIC
+#  Copyright (c) 2020 - Present  Simon Rose
+#  Copyright (c) 2017 - 2019     Jeong Han Lee
+#  Copyright (c) 2017 - 2019     European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -15,10 +16,15 @@
 #  You should have received a copy of the GNU General Public License along with
 #  this program. If not, see https://www.gnu.org/licenses/gpl-2.0.txt
 #
-# Author  : Jeong Han Lee
-# email   : jeonghan.lee@gmail.com
-# Date    : Wednesday, September  4 00:01:38 CEST 2019
-# version : 0.1.6
+# Author   : Jeong Han Lee
+# email    : jeonghan.lee@gmail.com
+# Date     : Wednesday, September  4 00:01:38 CEST 2019
+# version  : 0.1.6
+#
+# Author 2 : Simon Rose
+# email    : simon.rose@ess.eu
+# Date     : Monday, March 2 2020
+# version  : 4.37.0
 
 
 LEGACY_RSET = YES
